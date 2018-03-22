@@ -1,0 +1,50 @@
+camel:
+  springboot:
+    # The Camel context name
+    name: CamelRestSql
+
+# Binding health checks to a different port
+management:
+  port: 8081
+  
+server:
+  port: 8080
+
+# disable all management enpoints except health
+endpoints:
+  enabled: false
+  health:
+    enabled: true
+
+mysql:
+  service:
+#     # The name of the service hosting the MySQL database server,
+#     # can be customized using the 'MYSQL_SERVICE_NAME' env variable to use a different service
+    name:     ${MYSQL_SERVICE_NAME}
+#     # The database to use, can be customized using the 'MYSQL_SERVICE_DATABASE' env variable
+    database: ${MYSQL_SERVICE_DATABASE}
+    username: ${MYSQL_SERVICE_USERNAME}
+    password: ${MYSQL_SERVICE_PASSWORD}
+
+    
+spring:
+  # Spring JDBC configuration
+  datasource:
+    # url: 
+    url:      jdbc:mysql://${mysql.service.name}/${mysql.service.database}
+    username: ${mysql.service.username}
+    password: ${mysql.service.password}
+    # Let Spring Boot auto-configure The MySql database
+    # https://docs.spring.io/spring-boot/docs/current/reference/html/howto-database-initialization.html#howto-initialize-a-database-using-spring-jdbc
+    platform: MYSQL
+
+# The application configuration properties
+quickstart:
+  generateOrderPeriod: 10s
+  processOrderPeriod: 30s
+
+apiContext: /api
+
+apidoc:
+  host: 0.0.0.0
+  port: ${server.port}

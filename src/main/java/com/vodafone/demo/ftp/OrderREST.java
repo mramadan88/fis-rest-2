@@ -1,0 +1,70 @@
+package com.vodafone.demo.ftp;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
+import org.apache.commons.net.ftp.FTPClient;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
+
+
+@Component
+public class OrderREST extends RouteBuilder{
+
+	
+	
+	private String orderFTP = "ftp://vodafone:password@external-ftp-service?passiveMode=true&autoCreate=true&fileName=dummy-${header.id}.txt&ftpClient=#ftpClient"; 
+
+
+	@Bean(name = "ftpClient")
+	FTPClient ftpClient() {
+		FTPClient ftpClient = new org.apache.commons.net.ftp.FTPClient();
+		// required in case of forward proxy
+		ftpClient.setRemoteVerificationEnabled(false);
+
+        return ftpClient;
+    }
+	
+	
+	
+    @Override
+    public void configure() {       
+    	onException(Exception.class)
+	    	.handled(true)
+	    	.setBody(simple("Order file cannot be created"));
+    	
+    	
+    	
+		rest("/orders").description("Orders service")
+		
+			.post("/").type(Order.class).description("Create a new Order")
+			.route().routeId("insert-order").tracing()
+			.log("Order Id is ${body.id}")
+			.setHeader("id",simple("${body.id}"))
+			.log("Order Id is ${header.id} whole body is ${body}")
+			.idempotentConsumer(header("id"),
+			        MemoryIdempotentRepository.memoryIdempotentRepository(200)).skipDuplicate(true)
+			//		.to("bean:orderService?method=createOrder")
+			// .setHeader("CamelSqlRetrieveGeneratedKeys", constant(true)) // For some reason it doesn't work
+			// if it works the sql to retrieve the count will be not necessary
+			.log("creating new file in FTP server")
+			.process(new Processor() {
+			    public void process(Exchange exchange) throws Exception {
+			    	Order payload = exchange.getIn().getBody(Order.class);
+			        // do something with the payload and/or exchange here
+			    	InputStream is = new ByteArrayInputStream(StandardCharsets.UTF_8.encode(payload.toString()).array());
+			       exchange.getIn().setBody(is);
+			   }
+			})
+			.to(orderFTP)
+			.transform(constant("OK"))
+			.endRest();
+
+    			
+	}
+}
