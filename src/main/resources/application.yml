@@ -16,27 +16,13 @@ endpoints:
   health:
     enabled: true
 
-mysql:
-  service:
-#     # The name of the service hosting the MySQL database server,
-#     # can be customized using the 'MYSQL_SERVICE_NAME' env variable to use a different service
-    name:     ${MYSQL_SERVICE_NAME}
-#     # The database to use, can be customized using the 'MYSQL_SERVICE_DATABASE' env variable
-    database: ${MYSQL_SERVICE_DATABASE}
-    username: ${MYSQL_SERVICE_USERNAME}
-    password: ${MYSQL_SERVICE_PASSWORD}
-
-    
-spring:
-  # Spring JDBC configuration
-  datasource:
-    # url: 
-    url:      jdbc:mysql://${mysql.service.name}/${mysql.service.database}
-    username: ${mysql.service.username}
-    password: ${mysql.service.password}
-    # Let Spring Boot auto-configure The MySql database
-    # https://docs.spring.io/spring-boot/docs/current/reference/html/howto-database-initialization.html#howto-initialize-a-database-using-spring-jdbc
-    platform: MYSQL
+service:
+  ftp:
+#     # The name of the ftp service
+#     # can be customized using the 'FTP_SERVICE_NAME' env variable to use a different service
+    name:     ${FTP_SERVICE_NAME}
+    username: ${FTP_SERVICE_USERNAME}
+    password: ${FTP_SERVICE_PASSWORD}
 
 # The application configuration properties
 quickstart:

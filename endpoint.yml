@@ -4,7 +4,7 @@ metadata:
   name: "external-ftp-service" 
 subsets:
 - addresses:
-  - ip: 192.168.0.155
+  - ip: 192.168.5.121
   ports:
   - name: ftp
     port: 21

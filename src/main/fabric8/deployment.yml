@@ -15,13 +15,11 @@ spec:
               cpu: 
               memory: 512Mi
           env:
-          - name: MYSQL_SERVICE_NAME
-            value: mysql
-          - name: MYSQL_SERVICE_DATABASE
-            value: sampledb
-          - name: MYSQL_SERVICE_USERNAME
-            value: user
-          - name: MYSQL_SERVICE_PASSWORD
+          - name: FTP_SERVICE_NAME
+            value: external-ftp-service
+          - name: FTP_SERVICE_USERNAME
+            value: vodafone
+          - name: FTP_SERVICE_PASSWORD
             value: password
           - name: JAVA_DIAGNOSTICS
             value: true

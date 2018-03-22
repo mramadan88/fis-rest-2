@@ -4,11 +4,14 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.commons.net.ftp.FTPClient;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
@@ -17,8 +20,16 @@ import org.springframework.stereotype.Component;
 public class OrderREST extends RouteBuilder{
 
 	
+	@Value("${service.ftp.name}")
+	private String ftpServiceName;
+
+	@Value("${service.ftp.username}")
+	private String ftpServiceUsername;
 	
-	private String orderFTP = "ftp://vodafone:password@external-ftp-service?passiveMode=true&autoCreate=true&fileName=dummy-${header.id}.txt&ftpClient=#ftpClient"; 
+	@Value("${service.ftp.password}")
+	private String ftpServicePassword;
+	
+	private String orderFTP = "ftp://"+ftpServiceUsername+":"+ftpServicePassword+"@"+ftpServiceName+"?passiveMode=true&autoCreate=true&fileName=dummy-${header.id}.txt&ftpClient=#ftpClient"; 
 
 
 	@Bean(name = "ftpClient")
@@ -30,6 +41,11 @@ public class OrderREST extends RouteBuilder{
         return ftpClient;
     }
 	
+	@PostConstruct
+	  public void print() {
+		orderFTP = "ftp://"+ftpServiceUsername+":"+ftpServicePassword+"@"+ftpServiceName+"?passiveMode=true&autoCreate=true&fileName=dummy-${header.id}.txt&ftpClient=#ftpClient"; 
+	    System.out.println("PostConstruct  ======  "+orderFTP);
+	  }
 	
 	
     @Override
@@ -53,6 +69,7 @@ public class OrderREST extends RouteBuilder{
 			// .setHeader("CamelSqlRetrieveGeneratedKeys", constant(true)) // For some reason it doesn't work
 			// if it works the sql to retrieve the count will be not necessary
 			.log("creating new file in FTP server")
+			.log("FTP component : "+orderFTP)
 			.process(new Processor() {
 			    public void process(Exchange exchange) throws Exception {
 			    	Order payload = exchange.getIn().getBody(Order.class);
