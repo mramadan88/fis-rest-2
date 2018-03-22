@@ -1,0 +1,11 @@
+kind: "Endpoints"
+apiVersion: "v1"
+metadata:
+  name: "external-ftp-service" 
+subsets:
+- addresses:
+  - ip: 192.168.0.155
+  ports:
+  - name: ftp
+    port: 21
+    protocol: TCP

@@ -1,0 +1,12 @@
+kind: "Service"
+apiVersion: "v1"
+metadata:
+  name: "external-ftp-service"
+spec:
+  ports:
+  - name: "ftp"
+    protocol: "TCP"
+    port: 21
+    targetPort: 21
+    nodePort: 0
+selector: {}
