@@ -15,11 +15,10 @@
  */
 package com.vodafone.demo.ftp;
 
-public class Order {
+public class Dispatch {
 
     private int id;
     private String item;
-    private int amount;
     private String description;
     private boolean processed;
 
@@ -37,14 +36,6 @@ public class Order {
 
     public void setItem(String item) {
         this.item = item;
-    }
-
-    public int getAmount() {
-        return amount;
-    }
-
-    public void setAmount(int amount) {
-        this.amount = amount;
     }
 
     public String getDescription() {

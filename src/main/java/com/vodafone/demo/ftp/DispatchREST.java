@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 
 
 @Component
-public class OrderREST extends RouteBuilder{
+public class DispatchREST extends RouteBuilder{
 
 	
 	@Value("${service.ftp.name}")
@@ -42,11 +42,11 @@ public class OrderREST extends RouteBuilder{
     }
 	
 	@PostConstruct
-	  public void print() {
-		orderFTP = "ftp://"+ftpServiceUsername+":"+ftpServicePassword+"@"+ftpServiceName+"?passiveMode=true&autoCreate=true&fileName=dummy-${header.id}.txt&ftpClient=#ftpClient"; 
-	    System.out.println("PostConstruct  ======  "+orderFTP);
-	  }
-	
+	public void print() {
+		orderFTP = "ftp://" + ftpServiceUsername + ":" + ftpServicePassword + "@" + ftpServiceName
+				+ "?passiveMode=true&autoCreate=true&fileName=dummy-${header.id}.txt&ftpClient=#ftpClient";
+		System.out.println("PostConstruct  ======  " + orderFTP);
+	}
 	
     @Override
     public void configure() {       
@@ -58,7 +58,7 @@ public class OrderREST extends RouteBuilder{
     	
 		rest("/orders").description("Orders service")
 		
-			.post("/").type(Order.class).description("Create a new Order")
+			.post("/").type(Dispatch.class).description("Create a new Order")
 			.route().routeId("insert-order").tracing()
 			.log("Order Id is ${body.id}")
 			.setHeader("id",simple("${body.id}"))
@@ -72,7 +72,7 @@ public class OrderREST extends RouteBuilder{
 			.log("FTP component : "+orderFTP)
 			.process(new Processor() {
 			    public void process(Exchange exchange) throws Exception {
-			    	Order payload = exchange.getIn().getBody(Order.class);
+			    	Dispatch payload = exchange.getIn().getBody(Dispatch.class);
 			        // do something with the payload and/or exchange here
 			    	InputStream is = new ByteArrayInputStream(StandardCharsets.UTF_8.encode(payload.toString()).array());
 			       exchange.getIn().setBody(is);
