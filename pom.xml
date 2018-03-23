@@ -4,7 +4,7 @@
 
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.vodafone.demo.ftp</groupId>
+	<groupId>com.rahmed.redhat.demo</groupId>
 	<artifactId>fis-rest-2</artifactId>
 	<version>1.0</version>
 

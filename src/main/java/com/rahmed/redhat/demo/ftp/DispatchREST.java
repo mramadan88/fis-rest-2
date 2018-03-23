@@ -1,4 +1,4 @@
-package com.vodafone.demo.ftp;
+package com.rahmed.redhat.demo.ftp;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;

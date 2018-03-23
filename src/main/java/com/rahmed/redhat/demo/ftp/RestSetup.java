@@ -1,4 +1,4 @@
-package com.vodafone.demo.ftp;
+package com.rahmed.redhat.demo.ftp;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.servlet.CamelHttpTransportServlet;
