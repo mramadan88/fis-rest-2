@@ -29,7 +29,7 @@ public class DispatchREST extends RouteBuilder{
 	@Value("${service.ftp.password}")
 	private String ftpServicePassword;
 	
-	private String orderFTP = "ftp://"+ftpServiceUsername+":"+ftpServicePassword+"@"+ftpServiceName+"?passiveMode=true&autoCreate=true&fileName=dummy-${header.id}.txt&ftpClient=#ftpClient"; 
+	private String dispatchFTP = "ftp://"+ftpServiceUsername+":"+ftpServicePassword+"@"+ftpServiceName+"?passiveMode=true&autoCreate=true&fileName=dummy-${header.id}.txt&ftpClient=#ftpClient"; 
 
 
 	@Bean(name = "ftpClient")
@@ -43,42 +43,42 @@ public class DispatchREST extends RouteBuilder{
 	
 	@PostConstruct
 	public void print() {
-		orderFTP = "ftp://" + ftpServiceUsername + ":" + ftpServicePassword + "@" + ftpServiceName
+		dispatchFTP = "ftp://" + ftpServiceUsername + ":" + ftpServicePassword + "@" + ftpServiceName
 				+ "?passiveMode=true&autoCreate=true&fileName=dummy-${header.id}.txt&ftpClient=#ftpClient";
-		System.out.println("PostConstruct  ======  " + orderFTP);
+		System.out.println("PostConstruct  ======  " + dispatchFTP);
 	}
 	
     @Override
     public void configure() {       
     	onException(Exception.class)
 	    	.handled(true)
-	    	.setBody(simple("Order file cannot be created"));
+	    	.setBody(simple("Dispatch file cannot be created"));
     	
     	
     	
-		rest("/orders").description("Orders service")
+		rest("/dispatch").description("Dispatch service")
 		
-			.post("/").type(Dispatch.class).description("Create a new Order")
-			.route().routeId("insert-order").tracing()
+			.post("/").type(Dispatch.class).description("Create a new Dispatch Request")
+			.route().routeId("create-dispatch").tracing()
 			.log("Order Id is ${body.id}")
 			.setHeader("id",simple("${body.id}"))
-			.log("Order Id is ${header.id} whole body is ${body}")
+			.log("Dispatch Id is ${header.id} whole body is ${body}")
 			.idempotentConsumer(header("id"),
 			        MemoryIdempotentRepository.memoryIdempotentRepository(200)).skipDuplicate(true)
 			//		.to("bean:orderService?method=createOrder")
 			// .setHeader("CamelSqlRetrieveGeneratedKeys", constant(true)) // For some reason it doesn't work
 			// if it works the sql to retrieve the count will be not necessary
-			.log("creating new file in FTP server")
-			.log("FTP component : "+orderFTP)
+			.log("creating new Dispatch file in FTP server")
+			.log("FTP component : "+dispatchFTP)
 			.process(new Processor() {
 			    public void process(Exchange exchange) throws Exception {
 			    	Dispatch payload = exchange.getIn().getBody(Dispatch.class);
 			        // do something with the payload and/or exchange here
-			    	InputStream is = new ByteArrayInputStream(StandardCharsets.UTF_8.encode(payload.toString()).array());
+			    	InputStream is = new ByteArrayInputStream(StandardCharsets.ISO_8859_1.encode(payload.toString()).array());
 			       exchange.getIn().setBody(is);
 			   }
 			})
-			.to(orderFTP)
+			.to(dispatchFTP)
 			.transform(constant("OK"))
 			.endRest();
 

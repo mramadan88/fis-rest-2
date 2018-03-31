@@ -1,0 +1,6 @@
+oc new-app \
+    -e MONGODB_USER=user \
+    -e MONGODB_PASSWORD=password \
+    -e MONGODB_DATABASE=sampledb \
+    -e MONGODB_ADMIN_PASSWORD=redhatqwe \
+    registry.access.redhat.com/rhscl/mongodb-32-rhel7

@@ -1,7 +1,7 @@
 camel:
   springboot:
     # The Camel context name
-    name: FisRest
+    name: FisRestFtp
 
 # Binding health checks to a different port
 management:

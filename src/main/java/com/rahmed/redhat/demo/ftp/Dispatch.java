@@ -56,7 +56,7 @@ public class Dispatch {
 
 	@Override
 	public String toString() {
-		return "Order [id=" + id + ", item=" + item +", description=" + description
+		return "Dispatch [id=" + id + ", item=" + item +", description=" + description
 				+ ", processed=" + processed + "]";
 	}
     
